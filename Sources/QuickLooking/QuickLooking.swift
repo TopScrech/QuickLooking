@@ -4,7 +4,7 @@
 import SwiftUI
 import QuickLook
 
-@available(iOS 13, *)
+@available(iOS 13, visionOS 1, *)
 public struct QuickLookView: UIViewControllerRepresentable {
     let url: URL
     
