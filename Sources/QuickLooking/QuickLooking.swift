@@ -29,6 +29,7 @@ public struct QuickLookView: UIViewControllerRepresentable {
     
 }
 
+@available(iOS 13, *)
 public final class Coordinator: NSObject, QLPreviewControllerDataSource {
     private var parent: QuickLookView
     
