@@ -1,6 +1,3 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-
 import SwiftUI
 import QuickLook
 
@@ -19,14 +16,11 @@ public struct QuickLookView: UIViewControllerRepresentable {
         return controller
     }
     
-    public func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {
-        
-    }
+    public func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {}
     
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
 }
 
 @available(iOS 13, *)
