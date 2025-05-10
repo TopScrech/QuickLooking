@@ -2,46 +2,54 @@
 import SwiftUI
 import QuickLookUI
 
-@available(macOS 10.15, *)
+@available(macOS 11, *)
 private struct QuickLookPreviewModifier: ViewModifier {
     let url: URL
-    @State private var isPanelVisible = false
-
+    @Binding var isPresented: Bool
+    
     func body(content: Content) -> some View {
         content
-            .onTapGesture {
-                isPanelVisible = true
-                showQuickLook()
+            .onChange(of: isPresented) { _ in
+                if isPresented {
+                    showQuickLook()
+                    isPresented = false
+                }
             }
     }
-
+    
     private func showQuickLook() {
-        guard let panel = QLPreviewPanel.shared() else { return }
-        panel.dataSource = QuickLookPreviewController(url)
-        panel.delegate = QuickLookPreviewController(url)
+        guard let panel = QLPreviewPanel.shared() else {
+            return
+        }
+        
+        let controller = QuickLookPreviewController(url)
+        panel.dataSource = controller
+        panel.delegate = controller
         panel.updateController()
         panel.makeKeyAndOrderFront(nil)
     }
-
-    private class QuickLookPreviewController: NSObject, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
+    
+    private final class QuickLookPreviewController: NSObject, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
         let url: URL
-
+        
         init(_ url: URL) {
             self.url = url
         }
-
-        func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int { 1 }
-
+        
+        func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
+            1
+        }
+        
         func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> QLPreviewItem {
             url as QLPreviewItem
         }
     }
 }
 
-@available(macOS 10.15, *)
+@available(macOS 11, *)
 public extension View {
-    func quickLookPreview(_ url: URL) -> some View {
-        modifier(QuickLookPreviewModifier(url: url))
+    func quickLookPreview(_ url: URL, isPresented: Binding<Bool>) -> some View {
+        modifier(QuickLookPreviewModifier(url: url, isPresented: isPresented))
     }
 }
 #endif
