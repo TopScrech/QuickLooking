@@ -1,61 +1,43 @@
-#if os(macOS)
+#if !os(macOS)
 import SwiftUI
-import QuickLookUI
+import QuickLook
 
-@available(macOS 10.5, *)
-public struct QuickLookView: NSViewControllerRepresentable {
+@available(iOS 13, visionOS 1, *)
+public struct QuickLookView: UIViewControllerRepresentable {
     let url: URL
     
     public init(_ url: URL) {
         self.url = url
     }
     
-    public func makeNSViewController(context: Context) -> QuickLookHostingController {
-        QuickLookHostingController(url)
+    public func makeUIViewController(context: Context) -> QLPreviewController {
+        let controller = QLPreviewController()
+        controller.dataSource = context.coordinator
+        
+        return controller
     }
     
-    public func updateNSViewController(_ nsViewController: QuickLookHostingController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {}
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
 }
 
-@available(macOS 10.5, *)
-public final class QuickLookHostingController: NSViewController, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
-    private let url: URL
+@available(iOS 13, *)
+public final class Coordinator: NSObject, QLPreviewControllerDataSource {
+    private var parent: QuickLookView
     
-    init(_ url: URL) {
-        self.url = url
-        super.init(nibName: nil, bundle: nil)
+    init(_ parent: QuickLookView) {
+        self.parent = parent
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override func viewDidAppear() {
-        super.viewDidAppear()
-        QLPreviewPanel.shared()?.updateController()
-        QLPreviewPanel.shared()?.makeKeyAndOrderFront(nil)
-    }
-    
-    public override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool {
-        true
-    }
-    
-    public override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) {
-        panel.dataSource = self
-        panel.delegate = self
-    }
-    
-    public override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {
-        panel.dataSource = nil
-        panel.delegate = nil
-    }
-    
-    public func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
+    public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
         1
     }
     
-    public func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> QLPreviewItem {
-        url as QLPreviewItem
+    public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+        parent.url as QLPreviewItem
     }
 }
 #endif
