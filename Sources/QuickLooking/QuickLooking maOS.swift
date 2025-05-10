@@ -4,8 +4,13 @@ import QuickLookUI
 
 @available(macOS 11, *)
 private struct QuickLookPreviewModifier: ViewModifier {
-    let url: URL
-    @Binding var isPresented: Bool
+    private let url: URL
+    @Binding private var isPresented: Bool
+    
+    init(_ isPresented: Binding<Bool>, url: URL) {
+        _isPresented = isPresented
+        self.url = url
+    }
     
     func body(content: Content) -> some View {
         content
@@ -48,8 +53,8 @@ private struct QuickLookPreviewModifier: ViewModifier {
 
 @available(macOS 11, *)
 public extension View {
-    func quickLookPreview(_ url: URL, isPresented: Binding<Bool>) -> some View {
-        modifier(QuickLookPreviewModifier(url: url, isPresented: isPresented))
+    func quickLookPreview(_ isPresented: Binding<Bool>, url: URL) -> some View {
+        modifier(QuickLookPreviewModifier(isPresented, url: url))
     }
 }
 #endif
