@@ -5,13 +5,13 @@ import QuickLookUI
 @available(macOS 11, *)
 private struct QuickLookPreviewModifier: ViewModifier {
     @Binding private var isPresented: Bool
+    @Binding private var blur: Bool
     private let url: URL?
-    private let blur: Bool
     
-    init(_ isPresented: Binding<Bool>, url: URL?, blur: Bool) {
+    init(_ isPresented: Binding<Bool>, blur: Binding<Bool>, url: URL?) {
         _isPresented = isPresented
+        _blur = blur
         self.url = url
-        self.blur = blur
     }
     
     func body(content: Content) -> some View {
@@ -19,7 +19,7 @@ private struct QuickLookPreviewModifier: ViewModifier {
             .onChange(of: isPresented) { _ in
                 if isPresented {
                     if let url {
-                        showQuickLook(for: url)
+                        showQuickLook(url)
                     }
                     
                     isPresented = false
@@ -27,7 +27,7 @@ private struct QuickLookPreviewModifier: ViewModifier {
             }
     }
     
-    private func showQuickLook(for url: URL) {
+    private func showQuickLook(_ url: URL) {
         guard let panel = QLPreviewPanel.shared() else {
             return
         }
@@ -47,6 +47,7 @@ private struct QuickLookPreviewModifier: ViewModifier {
                 blurView.translatesAutoresizingMaskIntoConstraints = false
                 
                 contentView.addSubview(blurView, positioned: .above, relativeTo: nil)
+                
                 NSLayoutConstraint.activate([
                     blurView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                     blurView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -78,10 +79,10 @@ private struct QuickLookPreviewModifier: ViewModifier {
 public extension View {
     func quickLookPreview(
         _ isPresented: Binding<Bool>,
-        url: URL?,
-        blur: Bool = false
+        blur: Binding<Bool> = .constant(false),
+        url: URL?
     ) -> some View {
-        modifier(QuickLookPreviewModifier(isPresented, url: url, blur: blur))
+        modifier(QuickLookPreviewModifier(isPresented, blur: blur, url: url))
     }
 }
 #endif
