@@ -4,16 +4,19 @@ import QuickLookUI
 
 @available(macOS 11, *)
 private struct QuickLookPreviewModifier: ViewModifier {
-    private let url: URL?
     @Binding private var isPresented: Bool
+    private let url: URL?
+    private let blur: Bool
     
-    init(_ isPresented: Binding<Bool>, url: URL?) {
+    init(_ isPresented: Binding<Bool>, url: URL?, blur: Bool) {
         _isPresented = isPresented
         self.url = url
+        self.blur = blur
     }
     
     func body(content: Content) -> some View {
         content
+            .blur(radius: blur ? 10 : 0)
             .onChange(of: isPresented) { _ in
                 if isPresented {
                     if let url {
@@ -56,8 +59,12 @@ private struct QuickLookPreviewModifier: ViewModifier {
 
 @available(macOS 11, *)
 public extension View {
-    func quickLookPreview(_ isPresented: Binding<Bool>, url: URL?) -> some View {
-        modifier(QuickLookPreviewModifier(isPresented, url: url))
+    func quickLookPreview(
+        _ isPresented: Binding<Bool>,
+        url: URL?,
+        blur: Bool = false
+    ) -> some View {
+        modifier(QuickLookPreviewModifier(isPresented, url: url, blur: blur))
     }
 }
 #endif
