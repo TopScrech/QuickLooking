@@ -38,8 +38,14 @@ private struct QuickLookPreviewModifier: ViewModifier {
         panel.updateController()
         panel.makeKeyAndOrderFront(nil)
         
-        if blur {
-            if let contentView = panel.contentView {
+        if let contentView = panel.contentView {
+            for subview in contentView.subviews {
+                if let blurView = subview as? NSVisualEffectView {
+                    blurView.removeFromSuperview()
+                }
+            }
+            
+            if blur {
                 let blurView = NSVisualEffectView()
                 blurView.blendingMode = .withinWindow
                 blurView.material = .hudWindow
@@ -57,6 +63,7 @@ private struct QuickLookPreviewModifier: ViewModifier {
             }
         }
     }
+    
     
     private final class QuickLookPreviewController: NSObject, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
         let url: URL
