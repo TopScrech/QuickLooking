@@ -16,7 +16,6 @@ private struct QuickLookPreviewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .blur(radius: blur ? 10 : 0)
             .onChange(of: isPresented) { _ in
                 if isPresented {
                     if let url {
@@ -38,6 +37,24 @@ private struct QuickLookPreviewModifier: ViewModifier {
         panel.delegate = controller
         panel.updateController()
         panel.makeKeyAndOrderFront(nil)
+        
+        if blur {
+            if let contentView = panel.contentView {
+                let blurView = NSVisualEffectView()
+                blurView.blendingMode = .withinWindow
+                blurView.material = .hudWindow
+                blurView.state = .active
+                blurView.translatesAutoresizingMaskIntoConstraints = false
+                
+                contentView.addSubview(blurView, positioned: .above, relativeTo: nil)
+                NSLayoutConstraint.activate([
+                    blurView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                    blurView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                    blurView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                    blurView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+                ])
+            }
+        }
     }
     
     private final class QuickLookPreviewController: NSObject, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
