@@ -2,60 +2,46 @@
 import SwiftUI
 import QuickLookUI
 
-@available(macOS 10.5, *)
-public struct QuickLookView: NSViewControllerRepresentable {
+@available(macOS 10.15, *)
+private struct QuickLookPreviewModifier: ViewModifier {
     let url: URL
-    
-    public init(_ url: URL) {
-        self.url = url
+    @State private var isPanelVisible = false
+
+    func body(content: Content) -> some View {
+        content
+            .onTapGesture {
+                isPanelVisible = true
+                showQuickLook()
+            }
     }
-    
-    public func makeNSViewController(context: Context) -> QuickLookHostingController {
-        QuickLookHostingController(url)
+
+    private func showQuickLook() {
+        guard let panel = QLPreviewPanel.shared() else { return }
+        panel.dataSource = QuickLookPreviewController(url)
+        panel.delegate = QuickLookPreviewController(url)
+        panel.updateController()
+        panel.makeKeyAndOrderFront(nil)
     }
-    
-    public func updateNSViewController(_ nsViewController: QuickLookHostingController, context: Context) {}
+
+    private class QuickLookPreviewController: NSObject, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
+        let url: URL
+
+        init(_ url: URL) {
+            self.url = url
+        }
+
+        func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int { 1 }
+
+        func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> QLPreviewItem {
+            url as QLPreviewItem
+        }
+    }
 }
 
-@available(macOS 10.5, *)
-public final class QuickLookHostingController: NSViewController, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
-    private let url: URL
-    
-    init(_ url: URL) {
-        self.url = url
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override func viewDidAppear() {
-        super.viewDidAppear()
-        QLPreviewPanel.shared()?.updateController()
-        QLPreviewPanel.shared()?.makeKeyAndOrderFront(nil)
-    }
-    
-    public override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool {
-        true
-    }
-    
-    public override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) {
-        panel.dataSource = self
-        panel.delegate = self
-    }
-    
-    public override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {
-        panel.dataSource = nil
-        panel.delegate = nil
-    }
-    
-    public func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
-        1
-    }
-    
-    public func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> QLPreviewItem {
-        url as QLPreviewItem
+@available(macOS 10.15, *)
+public extension View {
+    func quickLookPreview(_ url: URL) -> some View {
+        modifier(QuickLookPreviewModifier(url: url))
     }
 }
 #endif
