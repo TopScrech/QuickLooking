@@ -5,12 +5,12 @@ import QuickLookUI
 @available(macOS 11, *)
 private struct QuickLookPreviewModifier: ViewModifier {
     @Binding private var isPresented: Bool
-    @Binding private var blur: Bool
     private let url: URL?
+    private let blur: Bool
     
-    init(_ isPresented: Binding<Bool>, blur: Binding<Bool>, url: URL?) {
+    init(_ isPresented: Binding<Bool>, url: URL?, blur: Bool) {
         _isPresented = isPresented
-        _blur = blur
+        self.blur = blur
         self.url = url
     }
     
@@ -86,10 +86,12 @@ private struct QuickLookPreviewModifier: ViewModifier {
 public extension View {
     func quickLookPreview(
         _ isPresented: Binding<Bool>,
-        blur: Binding<Bool> = .constant(false),
-        url: URL?
+        url: URL?,
+        blur: Bool = false
     ) -> some View {
-        modifier(QuickLookPreviewModifier(isPresented, blur: blur, url: url))
+        modifier(
+            QuickLookPreviewModifier(isPresented, url: url, blur: blur)
+        )
     }
 }
 #endif
