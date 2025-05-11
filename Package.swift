@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "QuickLooking",
     platforms: [
-        .macOS(.v11),
+        .macOS(.v14),
         .iOS(.v13)
     ],
     products: [
