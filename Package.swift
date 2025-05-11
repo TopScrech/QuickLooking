@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "QuickLooking",
     platforms: [
-        .macOS(.v11),
+        .macOS(.v14),
         .iOS(.v13)
     ],
     products: [
@@ -18,11 +18,6 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite
         // Targets can depend on other targets in this package and products from dependencies
-        .target(
-            name: "QuickLooking",
-            swiftSettings: [
-                .define("INCLUDE_QUICKLOOK", .when(platforms: [.iOS]))
-            ]
-        )
+        .target(name: "QuickLooking")
     ]
 )
