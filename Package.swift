@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 
 import PackageDescription
 
@@ -9,7 +9,8 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages
+        // Executables & libraries a package produces
+        // Visible to other packages
         .library(
             name: "QuickLooking",
             targets: ["QuickLooking"]
