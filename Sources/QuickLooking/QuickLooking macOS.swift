@@ -16,7 +16,7 @@ private struct QuickLookPreviewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .onChange(of: isPresented) { _ in
+            .onChange(of: isPresented) {
                 if isPresented {
                     if let url {
                         showQuickLook(url)
