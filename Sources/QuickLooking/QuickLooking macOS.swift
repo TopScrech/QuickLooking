@@ -8,7 +8,7 @@ private struct QuickLookPreviewModifier: ViewModifier {
     private let url: URL?
     private let blur: Bool
     
-    init(_ isPresented: Binding<Bool>, url: URL?, blur: Bool) {
+    init(_ isPresented: Binding<Bool>, _ url: URL?, _ blur: Bool) {
         _isPresented = isPresented
         self.blur = blur
         self.url = url
@@ -84,14 +84,8 @@ private struct QuickLookPreviewModifier: ViewModifier {
 
 @available(macOS 11, *)
 public extension View {
-    func quickLookPreview(
-        _ isPresented: Binding<Bool>,
-        url: URL?,
-        blur: Bool = false
-    ) -> some View {
-        modifier(
-            QuickLookPreviewModifier(isPresented, url: url, blur: blur)
-        )
+    func quickLookPreview(_ isPresented: Binding<Bool>, url: URL?, blur: Bool = false) -> some View {
+        modifier(QuickLookPreviewModifier(isPresented, url, blur))
     }
 }
 #endif

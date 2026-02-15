@@ -17,10 +17,7 @@ public struct QuickLookView: UIViewControllerRepresentable {
         return controller
     }
     
-    public func updateUIViewController(
-        _ uiViewController: QLPreviewController,
-        context: Context
-    ) {}
+    public func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {}
     
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -39,10 +36,7 @@ public final class Coordinator: NSObject, QLPreviewControllerDataSource {
         1
     }
     
-    public func previewController(
-        _ controller: QLPreviewController,
-        previewItemAt index: Int
-    ) -> QLPreviewItem {
+    public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
         parent.url as QLPreviewItem
     }
 }
