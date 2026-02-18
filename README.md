@@ -2,7 +2,7 @@
 
 Swift package that takes the pain out of implementing Quick Look previews
 
-## Platforms
+## Supported platforms
 - iOS 13+
 - macOS 11+
 
