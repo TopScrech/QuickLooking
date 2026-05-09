@@ -16,7 +16,6 @@ import QuickLooking
 ## Usage
 
 ### iOS
-Present `QuickLookView` with a file URL
 
 ```swift
 import SwiftUI
@@ -39,7 +38,6 @@ struct ContentView: View {
 ```
 
 ### macOS
-Use `.quickLookPreview` with a binding and URL
 
 ```swift
 import SwiftUI
